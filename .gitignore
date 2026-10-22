@@ -1,0 +1,19 @@
+# Local game library and private state; keep these directories outside the repo when possible.
+/RetroStationLibrary/
+/roms/
+/bios/
+/firmware/
+/artwork/
+/metadata/
+/saves/
+/backups/
+/local-data/
+
+# Local credentials and generated Python state.
+.env
+.env.*
+!.env.example
+.venv/
+__pycache__/
+.pytest_cache/
+*.py[cod]

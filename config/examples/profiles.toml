@@ -1,0 +1,10 @@
+# Names only. Listing these profiles does not require either emulator to be installed.
+[[systems]]
+id = "nes"
+name = "NES"
+emulator = "RetroArch"
+
+[[systems]]
+id = "gamecube"
+name = "GameCube"
+emulator = "Dolphin"
