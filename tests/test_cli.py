@@ -1,6 +1,7 @@
 """Exercise the user-facing RetroStation CLI without installed emulators."""
 
 import os
+import json
 from pathlib import Path
 import subprocess
 import sys
@@ -37,6 +38,80 @@ class SystemsCommandTests(unittest.TestCase):
             self.assertEqual(result.stdout, "nes\tNES\tRetroArch\ngamecube\tGameCube\tDolphin\n")
             self.assertEqual(result.stderr, "")
             self.assertEqual(config.read_text(encoding="utf-8"), contents)
+
+
+class CliContractTests(unittest.TestCase):
+    def test_previews_selected_system_without_executing_or_modifying_files(self):
+        with tempfile.TemporaryDirectory() as directory:
+            folder = Path(directory)
+            config = folder / "profiles.toml"
+            game = folder / "legal-test-game.bin"
+            marker = folder / "emulator-was-started"
+            game.write_bytes(b"synthetic game fixture")
+            script = f"from pathlib import Path; Path({str(marker)!r}).write_text('started')"
+            arguments = [sys.executable, "-c", script, "{game}"]
+            contents = (
+                '[[systems]]\nid = "nes"\nname = "NES"\nemulator = "Fixture"\n'
+                f'command = {json.dumps(arguments)}\n'
+                '\n[[systems]]\nid = "gamecube"\nname = "GameCube"\nemulator = "Dolphin"\n'
+            )
+            config.write_text(contents, encoding="utf-8")
+            environment = os.environ.copy()
+            environment["PYTHONPATH"] = str(ROOT / "src")
+            environment["PYTHONDONTWRITEBYTECODE"] = "1"
+
+            def invoke(*args):
+                return subprocess.run(
+                    [sys.executable, "-B", "-m", "retrostation", "--config", str(config), *args],
+                    cwd=directory, env=environment, capture_output=True, text=True, check=False,
+                )
+
+            preview = invoke("preview", "--system", "nes", "--game", str(game))
+            self.assertEqual(preview.returncode, 0, preview.stderr)
+            self.assertEqual(preview.stdout, json.dumps([*arguments[:-1], str(game)]) + "\n")
+            self.assertEqual(preview.stderr, "")
+            self.assertFalse(marker.exists())
+            self.assertEqual(game.read_bytes(), b"synthetic game fixture")
+            self.assertEqual(config.read_text(encoding="utf-8"), contents)
+
+            listing = invoke("systems")
+            self.assertEqual((listing.returncode, listing.stdout, listing.stderr),
+                             (0, "nes\tNES\tFixture\ngamecube\tGameCube\tDolphin\n", ""))
+
+            missing = invoke("preview", "--system", "gamecube", "--game", str(game))
+            self.assertEqual(missing.returncode, 2, missing.stderr)
+            self.assertEqual(missing.stdout, "")
+            self.assertIn("No launch command for system: gamecube", missing.stderr)
+            unknown = invoke("preview", "--system", "missing-system", "--game", str(game))
+            self.assertEqual(unknown.returncode, 2, unknown.stderr)
+            self.assertEqual(unknown.stdout, "")
+            self.assertIn("Unknown system: missing-system", unknown.stderr)
+            self.assertFalse(marker.exists())
+            self.assertEqual(game.read_bytes(), b"synthetic game fixture")
+            self.assertEqual(config.read_text(encoding="utf-8"), contents)
+
+    def test_rejects_invalid_launch_templates_without_changing_configuration(self):
+        commands = ('[]', '["emu", "no-game"]', '["emu", "{game}", "{game}"]', '"emu {game}"')
+        with tempfile.TemporaryDirectory() as directory:
+            config = Path(directory) / "profiles.toml"
+            environment = os.environ.copy()
+            environment["PYTHONPATH"] = str(ROOT / "src")
+            environment["PYTHONDONTWRITEBYTECODE"] = "1"
+            for command in commands:
+                with self.subTest(command=command):
+                    contents = (
+                        '[[systems]]\nid = "nes"\nname = "NES"\nemulator = "RetroArch"\n'
+                        f'command = {command}\n'
+                    )
+                    config.write_text(contents, encoding="utf-8")
+                    result = subprocess.run(
+                        [sys.executable, "-B", "-m", "retrostation", "--config", str(config), "systems"],
+                        cwd=directory, env=environment, capture_output=True, text=True, check=False,
+                    )
+                    self.assertEqual(result.returncode, 2, result.stderr)
+                    self.assertEqual(result.stdout, "")
+                    self.assertIn("Invalid command at system entry 1", result.stderr)
+                    self.assertEqual(config.read_text(encoding="utf-8"), contents)
 
     def test_rejects_unrecognized_profile_fields_without_changing_file(self):
         cases = (

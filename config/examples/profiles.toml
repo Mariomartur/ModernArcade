@@ -3,6 +3,8 @@
 id = "nes"
 name = "NES"
 emulator = "RetroArch"
+# Illustrative argv only: no emulator/core is installed or launched by preview.
+command = ["retroarch", "-L", "path-to-core", "{game}"]
 
 [[systems]]
 id = "gamecube"

@@ -10,14 +10,15 @@ RetroStation is an **application we build** to organize and launch existing cons
 
 ## Run the first app slice
 
-The initial Python 3.11+ core lists configured consoles and emulator names. It does **not** install emulators, scan games, launch a process, or implement the controller interface yet. `config/examples/profiles.toml` is synthetic configuration, not a claim that its emulators are installed.
+The initial Python 3.11+ core lists configured consoles and previews argument vectors for a selected system/game. It does **not** install emulators, scan games, open a game, launch a process, or implement the controller interface yet. `config/examples/profiles.toml` is synthetic configuration, not a claim that its emulators or core are installed.
 
 ```sh
 PYTHONPATH=src python3 -B -m retrostation --config config/examples/profiles.toml systems
+PYTHONPATH=src python3 -B -m retrostation --config config/examples/profiles.toml preview --system nes --game example.rom
 python3 -B -m unittest discover -s tests -v
 ```
 
-In Windows PowerShell, use `$env:PYTHONPATH = "src"` and `python -B -m retrostation --config config/examples/profiles.toml systems`. The command prints one tab-separated `id`, `name`, and `emulator` per configured system in file order. Provide `--config` **exactly once**; each `[[systems]]` entry has those three fields, and unknown fields are rejected rather than silently ignored. `systems` is currently the only command. The current code needs no downloaded dependencies or real games. For the ongoing work units, see [the feature log](odd/tasks/retrostation-app-foundation.md).
+In Windows PowerShell, set `$env:PYTHONPATH = "src"` and replace `python3` with `python` in these commands. `systems` prints tab-separated `id`, `name`, and `emulator` per configured system in file order. `preview` prints a JSON argument array; it never executes it, checks whether the named emulator is installed, or requires the game path to exist. Provide `--config` **exactly once**. Each `[[systems]]` entry requires `id`, `name`, and `emulator`; an optional `command` is a nonempty list of argument strings with exactly one standalone `"{game}"` token. Unknown fields are rejected rather than silently ignored. The example `command` contains a placeholder core and must be replaced before any future real launch. The current code needs no downloaded dependencies or real games. For the ongoing work units, see [the feature log](odd/tasks/retrostation-app-foundation.md).
 
 ## Boundaries
 

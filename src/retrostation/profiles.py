@@ -14,6 +14,7 @@ class SystemProfile:
     identifier: str
     name: str
     emulator: str
+    command: tuple[str, ...] | None = None
 
 
 def load_systems(path: Path) -> tuple[SystemProfile, ...]:
@@ -35,7 +36,7 @@ def load_systems(path: Path) -> tuple[SystemProfile, ...]:
     for position, row in enumerate(rows, start=1):
         if not isinstance(row, dict):
             raise ConfigError(f"Invalid system at entry {position}")
-        unknown = set(row) - {"id", "name", "emulator"}
+        unknown = set(row) - {"id", "name", "emulator", "command"}
         if unknown:
             raise ConfigError(f"Unknown field at system entry {position}: {sorted(unknown)[0]}")
         values = []
@@ -47,6 +48,15 @@ def load_systems(path: Path) -> tuple[SystemProfile, ...]:
         identifier, name, emulator = values
         if identifier in seen:
             raise ConfigError(f"Duplicate system id: {identifier}")
+        command = None
+        if "command" in row:
+            tokens = row["command"]
+            if (not isinstance(tokens, list) or not tokens
+                    or any(not isinstance(token, str) or not token.strip()
+                           or any(char in token for char in "\t\r\n") for token in tokens)
+                    or tokens.count("{game}") != 1):
+                raise ConfigError(f"Invalid command at system entry {position}: expected one {{game}} token")
+            command = tuple(tokens)
         seen.add(identifier)
-        profiles.append(SystemProfile(identifier, name, emulator))
+        profiles.append(SystemProfile(identifier, name, emulator, command))
     return tuple(profiles)
