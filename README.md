@@ -1,12 +1,13 @@
 # ModernArcade — RetroStation
 
-RetroStation is an **application we build** to organize and launch existing console emulators from one place. The ASUS laptop is its first controller-driven, offline-capable target, not the whole product. Begin the safe Python core in parallel with [Sprint 0](docs/sprint-0.md); verify the machine and protect existing data before installing emulators or changing an operating system.
+RetroStation is an **application we build** to organize and launch existing console emulators from one place. The ASUS laptop is its first controller-driven, offline-capable target, not the whole product. Begin the safe Python core in parallel with [Sprint 0](docs/sprint-0.md); verify the machine and protect existing data before further installations or changing an operating system.
 
 ## Quick path
 
 1. Read the [master plan](docs/RetroStation_Master_Plan.md), especially sections 8–11. Its earlier hardware readings are from October 17, 2026, not a fresh diagnosis.
 2. Work through the [Sprint 0 checklist](docs/sprint-0.md). Record safe, non-sensitive findings in the [hardware inventory](docs/hardware-inventory.md). This does not block read-only app development.
-3. Evaluate the [open platform decision](docs/decisions/ADR-001-platform-and-frontend.md) before installing an emulator or testing on the ASUS. The first playable hardware slice comes **after** the Sprint 0 exit checks.
+3. Keep the [platform decision](docs/decisions/ADR-001-platform-and-frontend.md) open. The isolated DS trial supplies evidence, but Sprint 0 safety checks must be completed before treating the hardware milestone as finished or making system changes.
+4. Track the first DS trial in the [test matrix](docs/test-matrix.md); manual boot does not yet verify saves, controller navigation, or offline replay.
 
 ## Run the first app slice
 
