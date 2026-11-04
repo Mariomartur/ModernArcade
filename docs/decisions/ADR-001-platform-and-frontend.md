@@ -1,7 +1,7 @@
 # ADR-001 — First-prototype platform and own-app interface
 
-Date: 2026-10-22<br>
-Status: Proposed (no selection made)
+Date: 2026-11-04<br>
+Status: Accepted for first-prototype platform only; UI library and final OS remain open
 
 ## Context
 
@@ -11,7 +11,7 @@ The [master plan](../RetroStation_Master_Plan.md#8-alternativas-de-plataforma-si
 
 | Option from the master plan | What to validate | Status |
 | --- | --- | --- |
-| Windows 11 + RetroStation + an emulator | Existing drivers, own-app controller navigation, return to menu, offline use | First-prototype candidate, not selected |
+| Windows 11 + RetroStation + an emulator | Existing drivers, own-app controller navigation, return to menu, offline use | Selected for first prototype; controller/menu/offline checks pending |
 | ES-DE, Playnite or RetroBat on Windows | Controller-first interaction ideas | Optional experience references, not the product |
 | General-purpose Linux + RetroStation | NVIDIA hybrid drivers, input, filesystem access and rollback | Deferred until safe test and backup |
 | Batocera on separate media | Boot safety and controller workflow | Optional comparison, not authorized to boot/install yet |
@@ -20,8 +20,8 @@ Direct repartitioning or reinstalling is **not authorized** by the master plan. 
 
 ## Decision and justification
 
-Pending: gather the [Sprint 0](../sprint-0.md) evidence and record the owner's first-prototype platform choice here. Choose the own-app UI library separately after examining controller requirements; no GUI toolkit is selected by this ADR. Record the final-OS choice separately if it ever becomes necessary. No emulator software has been installed or evaluated by this ADR.
+The owner selected the current Windows 11 installation for the **first prototype** on 2026-11-04. The isolated melonDS launch and restored progress were user-observed on Windows, so this avoids changing the operating system while developing the own-app interface. This choice does **not** complete the [Sprint 0](../sprint-0.md) safety inventory, authorize an installation or partition change, establish controller/offline acceptance, or settle the final OS. Choose the own-app UI library separately after examining controller requirements; no GUI toolkit is selected by this ADR.
 
 ## Consequences and next check
 
-Once a first-prototype choice is recorded, test one legally usable title without changing existing partitions. Document launch, controller behavior, save/load when supported, return to the menu, and a repeat with Wi-Fi disconnected; keep protected content outside Git.
+The isolated title boot and save reload are recorded in the [test matrix](../test-matrix.md). Next validate controller navigation, return to the menu, and a repeat with Wi-Fi disconnected on the selected first-prototype platform; do not change partitions or put protected content in Git.

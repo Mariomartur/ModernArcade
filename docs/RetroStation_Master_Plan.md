@@ -1,8 +1,8 @@
 # RetroStation — Documento maestro del proyecto
 
 > **Fuente de conocimiento canónica para los futuros chats y el repositorio.**<br>
-> Versión: **0.2.1** · Fecha de actualización: **4 de noviembre de 2026**<br>
-> Estado: **Núcleo y lanzamiento explícito probados; interfaz con mando, uso sin conexión e inventario de seguridad pendientes**<br>
+> Versión: **0.2.2** · Fecha de actualización: **4 de noviembre de 2026**<br>
+> Estado: **Windows 11 elegido para primer prototipo; interfaz con mando, uso sin conexión e inventario de seguridad pendientes**<br>
 > Mantenimiento: evolucionará con decisiones técnicas, pruebas, incidencias y cambios de alcance.
 
 ---
@@ -182,9 +182,9 @@ Registrar `sistema`, `juego`, `región/versión`, `origen legal`, `emulador + ve
 - Juego offline; biblioteca ampliable; backups/transferencia de guardados.
 - Git/GitHub desde el principio; trabajo colaborativo y didáctico; horas semanales.
 
-### Propuestas sin aprobar todavía
+### Plataforma del primer prototipo y propuestas restantes
 
-- **[PROPUESTA]** Usar **Windows 11 para un prototipo no destructivo** durante Sprint 0/1; así se verifica la emulación sin mezclar a la vez problemas de drivers, particiones y frontend. Comparar después Linux generalista mediante prueba LiveUSB/instalación de ensayo o sistema independiente, siempre con copia y autorización.
+- **[CONFIRMADO]** Usar **Windows 11 actual para el primer prototipo no destructivo**; quedan pendientes mando, regreso al menú y uso sin conexión. Comparar después Linux generalista mediante prueba LiveUSB/instalación de ensayo o sistema independiente solo con copia verificada y autorización.
 - **[CONFIRMADO]** La experiencia unificada será una aplicación propia que utilice emuladores existentes; no se desarrollarán motores de emulación. **[PROPUESTA]** Usar ES-DE, Playnite o RetroBat únicamente como referencias de experiencia y comparación, sin depender de ellos como interfaz principal.
 - **[PROPUESTA]** Aprovechar inicialmente **Python 3.11.9 confirmado en Windows** (sin actualizar por actualizar); SQLite para el catálogo; TOML/YAML para configuración; `pytest` para pruebas cuando haya código; Bash en Linux y PowerShell bajo Windows. Elevar la versión solo si una dependencia concreta lo exige.
 - **[PROPUESTA]** Mantener los ejecutables/emuladores en el SSD interno y guardar biblioteca/medios en la unidad de 2 TB si su salud y velocidad lo permiten. La ubicación definitiva de metadatos y guardados dependerá de pruebas de desconexión, respaldo y portabilidad.
@@ -286,13 +286,13 @@ Guardar copias críticas en **otro soporte distinto** del que aloja los original
 
 | Enfoque | Ventajas | Riesgos / costes de aprendizaje | Estado |
 |---|---|---|---|
-| Windows 11 + RetroStation + emuladores | No destructivo, acceso inmediato a drivers y software | Integración propia de mandos y cierre aún por construir | Prototipo candidato, por validar |
+| Windows 11 + RetroStation + emuladores | No destructivo, acceso inmediato a drivers y software | Integración propia de mandos y cierre aún por construir | Primer prototipo elegido; flujo con mando y offline por validar |
 | Windows 11 + ES-DE / Playnite / RetroBat | Referencias de experiencia, no aplicación objetivo | No prueban por sí solas la interfaz propia | Comparación opcional |
 | Linux generalista + RetroStation + emuladores | Aprendizaje Linux, Bash, proyecto portable | Drivers NVIDIA híbridos, mandos, permisos, particionado, montaje | Preferencia del usuario, por validar |
 | Batocera en soporte separado | Banco de pruebas de experiencia consola | No sustituye el desarrollo de RetroStation | Alternativa de evaluación |
 | Reinstalar/dual boot directamente | Flexibilidad o experiencia dedicada | Riesgo de pérdida de datos y arranque, mantenimiento adicional | **No autorizado ni prioritario** |
 
-**ADR pendiente (ADR-001):** plataforma del primer prototipo y método seguro de prueba de Linux. Registrar criterios: uso normal del portátil, compatibilidad, controlador NVIDIA, control por mando, rendimiento, trabajo offline, reproducibilidad y coste.
+**ADR-001:** Windows 11 actual elegido para el primer prototipo; biblioteca de interfaz y SO final pendientes. No se ha autorizado cambiar particiones ni instalar otro sistema. Quedan por verificar control por mando, regreso al menú, uso sin conexión y copia independiente antes de experimentar con otro SO.
 
 ---
 
@@ -306,7 +306,7 @@ Guardar copias críticas en **otro soporte distinto** del que aloja los original
 - Repositorio local Git y GitHub (cuando el usuario autorice conexión/publicación); README + documento maestro + `.gitignore`.
 - Inventario CPU/GPU/RAM/unidades/controladores; comprobar disponibilidad real de SSD/unidad externa.
 - Mapa de datos a proteger; elección documentada de dónde guardar pruebas.
-- ADR-001 abierto, con alternativas y criterios, sin borrar Windows.
+- ADR-001: Windows 11 elegido para el primer prototipo; interfaz y SO final abiertos, sin borrar Windows.
 
 **Criterio de salida:** se puede repetir el diagnóstico sin riesgo; documentación en Git, sin archivos protegidos.
 
@@ -427,9 +427,9 @@ git commit -m "docs: inicializar proyecto RetroStation"
 
 **Antes de `git add`:** revisar contenido y `.gitignore` para evitar ROMs, BIOS y datos personales. `git commit` puede requerir configurar nombre/correo de Git. Crear repositorio remoto cuando se haya confirmado su privacidad/licencia; GitHub no está creado automáticamente por este documento.
 
-### S0-04 — ADR-001 Sistema operativo y plataforma de prueba [PENDIENTE]
+### S0-04 — ADR-001 Sistema operativo y plataforma de prueba [PROTOTIPO WINDOWS ELEGIDO; SO FINAL PENDIENTE]
 
-Evaluar criterios de la sección 8. La decisión del **primer prototipo** puede ser distinta al **SO final**. Se recomienda una prueba no destructiva en Windows antes de seleccionar distribución Linux.
+El propietario eligió Windows 11 actual para el **primer prototipo**, sin cambios de sistema o particiones. La decisión puede ser distinta del **SO final**; falta comprobar mando, salida al menú y uso sin conexión, y verificar una copia independiente antes de experimentar con otro sistema.
 
 ### S0-05 — Selección de juego de prueba libre/propio [PENDIENTE]
 
@@ -444,7 +444,7 @@ Identificar un título que se pueda usar legalmente y que ofrezca un camino simp
 | Copia de seguridad | Por verificar | confirmación sin datos sensibles |
 | Repositorio Git local | Inicializado en `main`; commit inicial existente (22-10-2026) | revisar cambios antes de un próximo commit |
 | GitHub | Estado de publicación y visibilidad no verificado | confirmar decisión sobre licencia y visibilidad antes de publicar |
-| ADR-001 | Abierto | documento de alternativas |
+| ADR-001 | Windows 11 elegido para el primer prototipo; biblioteca de interfaz y SO final abiertos | [decisión](decisions/ADR-001-platform-and-frontend.md) |
 | Prueba DS aislada | Arranque y partida cargada observados por el usuario tanto en melonDS independiente como desde RetroStation; no equivale al hito 1 | [matriz de pruebas](test-matrix.md) |
 | Primera prueba con mando | No iniciada | evidencia de uso offline |
 
@@ -596,6 +596,7 @@ Son enlaces a documentación/proyectos, no una lista de software ya instalado ni
 | 0.1.3 | 2026-10-22 | Ubicada la versión única en `docs/`; comprobado Git local en `main` con commit inicial; preparados README, exclusiones locales y documentos de Sprint 0. Sin nuevas pruebas del ASUS ni publicación remota | Verificar almacenamiento externo, datos a proteger, copia independiente y mando antes de elegir prototipo |
 | 0.2.0 | 2026-10-22 | Cambiado el objetivo principal a aplicación propia que integra emuladores; ES-DE pasa a ser referencia opcional. El desarrollo del núcleo Python comienza en paralelo al diagnóstico, sin elegir todavía interfaz gráfica ni SO definitivo | Probar perfiles locales de sistemas; verificar después el ASUS y planificar el primer lanzamiento legal |
 | 0.2.1 | 2026-11-04 | Perfiles y previsualización probados; lanzamiento explícito y recarga de la partida observados por el usuario con copias DS aisladas. El núcleo tiene pruebas sintéticas; no se verificó Python 3.11 actual | Completar inventario/backup independiente, elegir plataforma del prototipo y evaluar interfaz con mando; comprobar retorno al menú y uso sin conexión |
+| 0.2.2 | 2026-11-04 | El propietario eligió Windows 11 actual como plataforma del primer prototipo, sin decidir la biblioteca de interfaz ni el SO final | Evaluar interfaz con mando y completar comprobaciones de retorno al menú, uso sin conexión y copia independiente antes de cambios del sistema |
 
 ### Último estado comprobado
 
@@ -611,7 +612,8 @@ Son enlaces a documentación/proyectos, no una lista de software ya instalado ni
 - [x] Lanzamiento aislado desde la aplicación y recarga de partida observados por el usuario; no es una prueba automatizada de jugabilidad ni del hito completo.
 - [ ] Publicación/visibilidad remota y licencia por verificar.
 - [ ] Protección de datos contrastada.
-- [ ] Plataforma de prueba e interfaz propia con mando evaluadas.
+- [x] Windows 11 actual elegido como plataforma del primer prototipo; no determina el SO final.
+- [ ] Biblioteca de interfaz propia con mando evaluada; navegación y uso sin conexión no verificados.
 - [ ] Primer juego ejecutado desde la aplicación propia con mando y sin Internet.
 
 **Próximo mensaje de trabajo sugerido:** «Continúa el núcleo de la aplicación RetroStation desde `odd/tasks/retrostation-app-foundation.md`; en paralelo completa el inventario seguro de Sprint 0 (unidad externa, mando y copia de seguridad) sin instalar software ni mover datos hasta validar la estrategia».
