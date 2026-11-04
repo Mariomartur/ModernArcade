@@ -19,6 +19,14 @@ PYTHONPATH=src python3 -B -m retrostation --config config/examples/profiles.toml
 python3 -B -m unittest discover -s tests -v
 ```
 
+The synthetic menu spike runs independently of pygame-ce and does not open a window or game:
+
+```sh
+PYTHONPATH=src python3 -B -m retrostation.menu --simulate down select back
+```
+
+Provide `--simulate` once with the actions in order. The command shows a sample two-system menu, a mock preview and a return to the menu. `src/retrostation/pygame_input.py` maps candidate pygame-ce controller button events to those actions, but no dependency was installed and no actual window, DualShock 4, or offline flow has been verified. Do not treat simulated navigation as hardware acceptance.
+
 In Windows PowerShell, set `$env:PYTHONPATH = "src"` and replace `python3` with `python` in these commands. `systems` prints tab-separated `id`, `name`, and `emulator` per configured system in file order. `preview` prints a JSON argument array; it never executes it, checks whether the named emulator is installed, or requires the game path to exist. Provide `--config` **exactly once**. Each `[[systems]]` entry requires `id`, `name`, and `emulator`; an optional `command` is a nonempty list of argument strings with exactly one standalone `"{game}"` token. Unknown fields are rejected rather than silently ignored. The example `command` contains a placeholder core and cannot be used to launch a real emulator. The current code needs no downloaded dependencies or real games for its tests. For the ongoing work units, see [the feature log](odd/tasks/retrostation-app-foundation.md).
 
 **Real process boundary:** `launch --system nds --game <copied-game-path> --confirm` requires a private `--config` file outside Git, an absolute existing emulator executable outside Git, and an existing game outside Git. It reuses the previewed arguments, starts the emulator **without a shell** in the executable's directory, and returns its exit code after it closes. This is not an OS sandbox: the emulator may write saves or config files. Use only your own profile and isolated game copy with a backup; never point `launch` at a game in this repository. The [test matrix](docs/test-matrix.md) distinguishes the earlier standalone melonDS trial from the later owner-observed app-driven launch and save reload.
