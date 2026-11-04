@@ -9,6 +9,9 @@
 /backups/
 /local-data/
 
+# Loose Nintendo DS game images must not be staged from the workspace root.
+*.nds
+
 # Local credentials and generated Python state.
 .env
 .env.*
