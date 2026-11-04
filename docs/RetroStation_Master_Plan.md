@@ -1,8 +1,8 @@
 # RetroStation — Documento maestro del proyecto
 
 > **Fuente de conocimiento canónica para los futuros chats y el repositorio.**<br>
-> Versión: **0.2.0** · Fecha de actualización: **22 de octubre de 2026**<br>
-> Estado: **Desarrollo de la aplicación propia iniciado; inventario de Windows y primera prueba real pendientes**<br>
+> Versión: **0.2.1** · Fecha de actualización: **4 de noviembre de 2026**<br>
+> Estado: **Núcleo y lanzamiento explícito probados; interfaz con mando, uso sin conexión e inventario de seguridad pendientes**<br>
 > Mantenimiento: evolucionará con decisiones técnicas, pruebas, incidencias y cambios de alcance.
 
 ---
@@ -233,7 +233,7 @@ Registrar `sistema`, `juego`, `región/versión`, `origen legal`, `emulador + ve
                      └────────────────────────────┘
 ```
 
-**Importante:** el núcleo y la primera CLI son un corte inicial de **la aplicación propia**, no su interfaz final. El primer corte solo lee perfiles de sistemas/emuladores; no instala ni ejecuta software externo. Catálogo SQLite, lanzamiento real e interfaz con mando se incorporarán en cortes verificables, sin prometerlos como ya implementados.
+**Importante:** el núcleo y la CLI son cortes iniciales de **la aplicación propia**, no su interfaz final. `systems` enumera perfiles y `preview` genera argumentos sin ejecutar procesos; `launch --confirm` inicia un emulador externo desde un perfil privado con archivos fuera de Git. El usuario observó que el juego y la partida se cargaron desde la aplicación usando copias aisladas; esto no acredita una sesión estable, mando ni uso sin conexión. Catálogo SQLite e interfaz con mando siguen pendientes. Véase la [matriz de pruebas](test-matrix.md).
 
 ### Separación de responsabilidades
 
@@ -445,6 +445,7 @@ Identificar un título que se pueda usar legalmente y que ofrezca un camino simp
 | Repositorio Git local | Inicializado en `main`; commit inicial existente (22-10-2026) | revisar cambios antes de un próximo commit |
 | GitHub | Estado de publicación y visibilidad no verificado | confirmar decisión sobre licencia y visibilidad antes de publicar |
 | ADR-001 | Abierto | documento de alternativas |
+| Prueba DS aislada | Arranque y partida cargada observados por el usuario tanto en melonDS independiente como desde RetroStation; no equivale al hito 1 | [matriz de pruebas](test-matrix.md) |
 | Primera prueba con mando | No iniciada | evidencia de uso offline |
 
 ---
@@ -561,7 +562,7 @@ Cómo validar / revertir:
 
 ## 15. Guía para el siguiente chat / instrucciones de colaboración
 
-> Estoy desarrollando **RetroStation**, una aplicación propia en Python que unifica emuladores existentes de varias consolas; el ASUS ROG Strix G es el primer equipo de prueba, no el único objetivo. Lee este documento entero y trabaja desde las decisiones y estados ya registrados. Comienza con un núcleo pequeño, probado y sin archivos de juegos reales; después integra lanzamiento, biblioteca y una interfaz propia controlable por mando. Desarrolla los cortes que autorice y explica sus fundamentos para que pueda aprender y revisarlos; no presupongas la tecnología de interfaz ni el SO definitivo. Mantén Git y la documentación desde el primer día. No cambies ni formatees el SO, ni muevas mis datos, ni publiques el repositorio sin autorización. Prioriza estabilidad, uso offline, mando, biblioteca local y coste cero. Si hay dudas técnicas, verifica fuentes oficiales actuales. Completa Sprint 0 de hardware/seguridad antes de experimentar con sistemas operativos o instalaciones reales; el desarrollo del núcleo seguro puede avanzar en paralelo.
+> Estoy desarrollando **RetroStation**, una aplicación propia en Python que unifica emuladores existentes de varias consolas; el ASUS ROG Strix G es el primer equipo de prueba, no el único objetivo. Lee este documento entero y trabaja desde las decisiones y estados ya registrados. El núcleo Python, la previsualización y el lanzamiento explícito `launch --confirm` ya existen; las pruebas sintéticas y la observación del usuario con copias aisladas no completan el hito de mando y uso sin conexión. Continúa con la biblioteca y la interfaz propia controlable por mando en cortes verificables. Desarrolla los cortes que autorice y explica sus fundamentos para que pueda aprender y revisarlos; no presupongas la tecnología de interfaz ni el SO definitivo. Mantén Git y la documentación desde el primer día. No cambies ni formatees el SO, ni muevas mis datos, ni publiques el repositorio sin autorización. Prioriza estabilidad, uso offline, mando, biblioteca local y coste cero. Si hay dudas técnicas, verifica fuentes oficiales actuales. Completa Sprint 0 de hardware/seguridad antes de experimentar con sistemas operativos o instalaciones reales; el desarrollo del núcleo seguro puede avanzar en paralelo.
 
 ---
 
@@ -594,6 +595,7 @@ Son enlaces a documentación/proyectos, no una lista de software ya instalado ni
 | 0.1.2 | 2026-10-17 | Confirmado Python 3.11.9 con comando `python`; `py` opcional; segunda medición GPU 70 °C a 5 W y 3 % de uso, tras desaparecer MuMuPlayer de procesos; Git pendiente de inicializar | Verificar almacenamiento externo, revisar refrigeración sin estrés y crear primer repo Git local |
 | 0.1.3 | 2026-10-22 | Ubicada la versión única en `docs/`; comprobado Git local en `main` con commit inicial; preparados README, exclusiones locales y documentos de Sprint 0. Sin nuevas pruebas del ASUS ni publicación remota | Verificar almacenamiento externo, datos a proteger, copia independiente y mando antes de elegir prototipo |
 | 0.2.0 | 2026-10-22 | Cambiado el objetivo principal a aplicación propia que integra emuladores; ES-DE pasa a ser referencia opcional. El desarrollo del núcleo Python comienza en paralelo al diagnóstico, sin elegir todavía interfaz gráfica ni SO definitivo | Probar perfiles locales de sistemas; verificar después el ASUS y planificar el primer lanzamiento legal |
+| 0.2.1 | 2026-11-04 | Perfiles y previsualización probados; lanzamiento explícito y recarga de la partida observados por el usuario con copias DS aisladas. El núcleo tiene pruebas sintéticas; no se verificó Python 3.11 actual | Completar inventario/backup independiente, elegir plataforma del prototipo y evaluar interfaz con mando; comprobar retorno al menú y uso sin conexión |
 
 ### Último estado comprobado
 
@@ -602,10 +604,11 @@ Son enlaces a documentación/proyectos, no una lista de software ya instalado ni
 - [x] Se han identificado restricciones: 0 €, HDMI roto, pantalla propia, unidad externa, Windows sin formatear.
 - [x] Se ha escogido filosofía didáctica y tecnologías de interés.
 - [x] Diagnóstico parcial de SSD interno, driver NVIDIA y Git.
-- [x] Python 3.11.9 confirmado (comando `python`); no se requiere instalación por el momento.
+- [x] Python 3.11.9 observado el 17-10-2026; la ejecución actual de la suite en 3.11 no se ha verificado.
 - [x] Repetición de medición NVIDIA: 70 °C, 5 W, ~3 % de uso; temperatura pendiente de investigar.
 - [ ] Diagnóstico externo de 2 TB, refrigeración/temperaturas de CPU y mando.
-- [x] Git local inicializado en `main` con commit inicial; cambios de Sprint 0 aún sin commit.
+- [x] Git local inicializado; los cortes del núcleo y del lanzamiento se registraron en `odd/tasks/retrostation-app-foundation.md`.
+- [x] Lanzamiento aislado desde la aplicación y recarga de partida observados por el usuario; no es una prueba automatizada de jugabilidad ni del hito completo.
 - [ ] Publicación/visibilidad remota y licencia por verificar.
 - [ ] Protección de datos contrastada.
 - [ ] Plataforma de prueba e interfaz propia con mando evaluadas.
