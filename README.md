@@ -7,11 +7,11 @@ RetroStation is an **application we build** to organize and launch existing cons
 1. Read the [master plan](docs/RetroStation_Master_Plan.md), especially sections 8–11. Its earlier hardware readings are from October 17, 2026, not a fresh diagnosis.
 2. Work through the [Sprint 0 checklist](docs/sprint-0.md). Record safe, non-sensitive findings in the [hardware inventory](docs/hardware-inventory.md). This does not block read-only app development.
 3. Keep the [platform decision](docs/decisions/ADR-001-platform-and-frontend.md) open. The isolated DS trial supplies evidence, but Sprint 0 safety checks must be completed before treating the hardware milestone as finished or making system changes.
-4. Track the first DS trial in the [test matrix](docs/test-matrix.md); manual boot does not yet verify saves, controller navigation, or offline replay.
+4. Track the first DS trial in the [test matrix](docs/test-matrix.md); owner-observed boot and save/load from the app do not yet verify controller navigation, offline replay, or a stable session.
 
-## Run the first app slice
+## Run the app core
 
-The initial Python 3.11+ core lists configured consoles and previews argument vectors for a selected system/game. It does **not** install emulators, scan games, open a game, launch a process, or implement the controller interface yet. `config/examples/profiles.toml` is synthetic configuration, not a claim that its emulators or core are installed.
+The Python 3.11+ core lists configured consoles and previews argument vectors for a selected system/game. `systems` and `preview` never start an emulator. The separate `launch` command **does** run the executable named by a trusted local profile after explicit confirmation; it does not install emulators or implement the controller interface. `config/examples/profiles.toml` is synthetic, not a claim that its emulators or core are installed.
 
 ```sh
 PYTHONPATH=src python3 -B -m retrostation --config config/examples/profiles.toml systems
@@ -19,7 +19,9 @@ PYTHONPATH=src python3 -B -m retrostation --config config/examples/profiles.toml
 python3 -B -m unittest discover -s tests -v
 ```
 
-In Windows PowerShell, set `$env:PYTHONPATH = "src"` and replace `python3` with `python` in these commands. `systems` prints tab-separated `id`, `name`, and `emulator` per configured system in file order. `preview` prints a JSON argument array; it never executes it, checks whether the named emulator is installed, or requires the game path to exist. Provide `--config` **exactly once**. Each `[[systems]]` entry requires `id`, `name`, and `emulator`; an optional `command` is a nonempty list of argument strings with exactly one standalone `"{game}"` token. Unknown fields are rejected rather than silently ignored. The example `command` contains a placeholder core and must be replaced before any future real launch. The current code needs no downloaded dependencies or real games. For the ongoing work units, see [the feature log](odd/tasks/retrostation-app-foundation.md).
+In Windows PowerShell, set `$env:PYTHONPATH = "src"` and replace `python3` with `python` in these commands. `systems` prints tab-separated `id`, `name`, and `emulator` per configured system in file order. `preview` prints a JSON argument array; it never executes it, checks whether the named emulator is installed, or requires the game path to exist. Provide `--config` **exactly once**. Each `[[systems]]` entry requires `id`, `name`, and `emulator`; an optional `command` is a nonempty list of argument strings with exactly one standalone `"{game}"` token. Unknown fields are rejected rather than silently ignored. The example `command` contains a placeholder core and cannot be used to launch a real emulator. The current code needs no downloaded dependencies or real games for its tests. For the ongoing work units, see [the feature log](odd/tasks/retrostation-app-foundation.md).
+
+**Real process boundary:** `launch --system nds --game <copied-game-path> --confirm` requires a private `--config` file outside Git, an absolute existing emulator executable outside Git, and an existing game outside Git. It reuses the previewed arguments, starts the emulator **without a shell** in the executable's directory, and returns its exit code after it closes. This is not an OS sandbox: the emulator may write saves or config files. Use only your own profile and isolated game copy with a backup; never point `launch` at a game in this repository. The [test matrix](docs/test-matrix.md) distinguishes the earlier standalone melonDS trial from the later owner-observed app-driven launch and save reload.
 
 ## Boundaries
 

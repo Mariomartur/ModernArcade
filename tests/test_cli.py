@@ -41,6 +41,26 @@ class SystemsCommandTests(unittest.TestCase):
 
 
 class CliContractTests(unittest.TestCase):
+    def test_existing_root_help_keeps_its_previous_body(self):
+        environment = dict(os.environ, PYTHONPATH=str(ROOT / "src"), COLUMNS="80")
+        result = subprocess.run(
+            [sys.executable, "-B", "-m", "retrostation", "--help"],
+            cwd=ROOT, env=environment, capture_output=True, text=True, check=False,
+        )
+        expected_body = (
+            "\nExplore configured console emulator profiles\n"
+            "\npositional arguments:\n"
+            "  {systems,preview}\n"
+            "    systems          List configured consoles and their emulator names (no\n"
+            "                     launch)\n"
+            "    preview          Print emulator arguments for one game as JSON (no launch)\n"
+            "\noptions:\n"
+            "  -h, --help         show this help message and exit\n"
+            "  --config CONFIG    Path to one local TOML profile file\n"
+        )
+        self.assertEqual((result.returncode, result.stderr), (0, ""))
+        self.assertEqual(result.stdout.partition("\n")[2], expected_body)
+
     def test_previews_selected_system_without_executing_or_modifying_files(self):
         with tempfile.TemporaryDirectory() as directory:
             folder = Path(directory)
@@ -152,6 +172,26 @@ class CliContractTests(unittest.TestCase):
             self.assertEqual(result.stdout, "")
             self.assertIn("error:", result.stderr)
             self.assertEqual(config.read_text(encoding="utf-8"), contents)
+
+    def test_existing_commands_reject_launch_confirmation_option(self):
+        with tempfile.TemporaryDirectory() as directory:
+            config = Path(directory) / "profiles.toml"
+            contents = '[[systems]]\nid = "nes"\nname = "NES"\nemulator = "Fixture"\ncommand = ["not-installed", "{game}"]\n'
+            config.write_text(contents, encoding="utf-8")
+            environment = dict(os.environ, PYTHONPATH=str(ROOT / "src"), PYTHONDONTWRITEBYTECODE="1")
+            cases = (("systems", "--confirm"), ("preview", "--system", "nes", "--game", "example.nds", "--confirm"))
+            for arguments in cases:
+                with self.subTest(action=arguments[0]):
+                    result = subprocess.run(
+                        [sys.executable, "-B", "-m", "retrostation", "--config", str(config), *arguments],
+                        cwd=directory, env=environment, capture_output=True, text=True, check=False,
+                    )
+                    self.assertEqual(result.returncode, 2, result.stderr)
+                    self.assertEqual(result.stdout, "")
+                    self.assertIn("unrecognized arguments: --confirm", result.stderr)
+                    self.assertIn("{systems,preview}", result.stderr)
+                    self.assertNotIn("launch", result.stderr)
+                    self.assertEqual(config.read_text(encoding="utf-8"), contents)
 
 
 if __name__ == "__main__":

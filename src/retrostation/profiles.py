@@ -51,7 +51,7 @@ def load_systems(path: Path) -> tuple[SystemProfile, ...]:
         command = None
         if "command" in row:
             tokens = row["command"]
-            if (not isinstance(tokens, list) or not tokens
+            if (not isinstance(tokens, list) or not tokens or tokens[0] == "{game}"
                     or any(not isinstance(token, str) or not token.strip()
                            or any(char in token for char in "\t\r\n") for token in tokens)
                     or tokens.count("{game}") != 1):
