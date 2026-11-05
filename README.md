@@ -7,7 +7,7 @@ RetroStation is an **application we build** to organize and launch existing cons
 1. Read the [master plan](docs/RetroStation_Master_Plan.md), especially sections 8–11. Its earlier hardware readings are from October 17, 2026, not a fresh diagnosis.
 2. Work through the [Sprint 0 checklist](docs/sprint-0.md). Record safe, non-sensitive findings in the [hardware inventory](docs/hardware-inventory.md). This does not block read-only app development.
 3. Use [ADR-001](docs/decisions/ADR-001-platform-and-frontend.md) for the Windows 11 first-prototype choice; the UI toolkit and final OS remain undecided. Sprint 0 safety checks must be completed before treating the hardware milestone as finished or making system changes.
-4. Track the first DS trial in the [test matrix](docs/test-matrix.md); owner-observed boot and save/load from the app do not yet verify controller navigation, offline replay, or a stable session.
+4. Track the first DS trial in the [test matrix](docs/test-matrix.md); the owner separately observed controller navigation in a game-free menu, but return from a running game, offline replay and a stable session remain unverified.
 
 ## Run the app core
 
@@ -33,7 +33,7 @@ $uiPython = Join-Path ([Environment]::GetFolderPath("Desktop")) 'prueba_emu_nds_
 & $uiPython -B -m retrostation.pygame_menu --window
 ```
 
-D-pad moves, A selects the mock preview, B returns, and the window's close button exits. No real emulator is launched. A successful window process does not prove DualShock 4 mapping, return from a real game, or offline replay; record those only after observing them on the device.
+D-pad moves, A selects the mock preview, B returns, and the window's close button exits. No real emulator is launched. The owner reported that D-pad/A/B worked in this game-free Windows menu on 2026-11-05; process completion alone did not prove it. Return from a running game and offline replay remain unverified.
 
 In Windows PowerShell, set `$env:PYTHONPATH = "src"` and replace `python3` with `python` in these commands. `systems` prints tab-separated `id`, `name`, and `emulator` per configured system in file order. `preview` prints a JSON argument array; it never executes it, checks whether the named emulator is installed, or requires the game path to exist. Provide `--config` **exactly once**. Each `[[systems]]` entry requires `id`, `name`, and `emulator`; an optional `command` is a nonempty list of argument strings with exactly one standalone `"{game}"` token. Unknown fields are rejected rather than silently ignored. The example `command` contains a placeholder core and cannot be used to launch a real emulator. The current code needs no downloaded dependencies or real games for its tests. For the ongoing work units, see [the feature log](odd/tasks/retrostation-app-foundation.md).
 
