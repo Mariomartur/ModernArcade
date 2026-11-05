@@ -7,7 +7,7 @@
   - `PYTHONPATH=src python3 -B -m retrostation --config config/examples/profiles.toml systems`
   - `PYTHONPATH=src python3 -B -m retrostation --config config/examples/profiles.toml preview --system nes --game example.rom`
 - Tests: `python3 -B -m unittest discover -s tests -v`. In PowerShell, set `$env:PYTHONPATH = "src"` for CLI commands and use `python` instead of `python3`.
-- Headless menu spike: `PYTHONPATH=src python3 -B -m retrostation.menu --simulate down select back`; its pygame-ce button mapper is optional, not installed or a verified window/controller workflow.
+- Headless menu: `PYTHONPATH=src python3 -B -m retrostation.menu --simulate down select back`. pygame-ce is pinned only for the isolated Windows UI environment; `retrostation.pygame_menu --window` never launches a game, and a synthetic check is not proof of real controller behavior.
 - The sample TOML contains illustrative emulator/core names; `preview` only prints argv and does not check installation or game existence. Pass `--config` exactly once.
 
 ## Code and evidence boundaries

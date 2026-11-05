@@ -19,13 +19,21 @@ PYTHONPATH=src python3 -B -m retrostation --config config/examples/profiles.toml
 python3 -B -m unittest discover -s tests -v
 ```
 
-The synthetic menu spike runs independently of pygame-ce and does not open a window or game:
+The synthetic menu still runs independently of pygame-ce and does not open a window or game:
 
 ```sh
 PYTHONPATH=src python3 -B -m retrostation.menu --simulate down select back
 ```
 
-Provide `--simulate` once with the actions in order. The command shows a sample two-system menu, a mock preview and a return to the menu. `src/retrostation/pygame_input.py` maps candidate pygame-ce controller button events to those actions, but no dependency was installed and no actual window, DualShock 4, or offline flow has been verified. Do not treat simulated navigation as hardware acceptance.
+Provide `--simulate` once with the actions in order. It shows a sample two-system menu, a mock preview and a return to the menu. The optional **game-free** window uses the same state and pygame-ce's mapped controller button events. An isolated Windows Python 3.14 environment under the owner's Desktop test sandbox contains the pinned optional dependency in `requirements-ui.txt`; global Python and games are untouched. From PowerShell at the repository root, after connecting the controller:
+
+```powershell
+$env:PYTHONPATH = (Resolve-Path src).Path
+$uiPython = Join-Path ([Environment]::GetFolderPath("Desktop")) 'prueba_emu_nds_1\ui-venv\Scripts\python.exe'
+& $uiPython -B -m retrostation.pygame_menu --window
+```
+
+D-pad moves, A selects the mock preview, B returns, and the window's close button exits. No real emulator is launched. A successful window process does not prove DualShock 4 mapping, return from a real game, or offline replay; record those only after observing them on the device.
 
 In Windows PowerShell, set `$env:PYTHONPATH = "src"` and replace `python3` with `python` in these commands. `systems` prints tab-separated `id`, `name`, and `emulator` per configured system in file order. `preview` prints a JSON argument array; it never executes it, checks whether the named emulator is installed, or requires the game path to exist. Provide `--config` **exactly once**. Each `[[systems]]` entry requires `id`, `name`, and `emulator`; an optional `command` is a nonempty list of argument strings with exactly one standalone `"{game}"` token. Unknown fields are rejected rather than silently ignored. The example `command` contains a placeholder core and cannot be used to launch a real emulator. The current code needs no downloaded dependencies or real games for its tests. For the ongoing work units, see [the feature log](odd/tasks/retrostation-app-foundation.md).
 
@@ -35,6 +43,6 @@ In Windows PowerShell, set `$env:PYTHONPATH = "src"` and replace `python3` with 
 
 - Keep Windows 11 and existing files intact. No partitioning or OS installation without a reasoned decision and a verified independent backup.
 - Do not commit games, disc images, BIOS/firmware, credentials, personal records, private saves, populated databases, or artwork without appropriate rights. The `.gitignore` helps with local folders; it is **not** a privacy guarantee. Inspect staged files before every commit.
-- The Python core is the first implemented part of the app. The SQLite catalog, GUI toolkit, Linux installation, public repository, and license are not yet settled choices for this first code slice.
+- The Python core is the first implemented part of the app. pygame-ce is a first-prototype UI candidate, not a final toolkit decision; the SQLite catalog, Linux installation, public repository, and license remain open.
 
 The [master plan](docs/RetroStation_Master_Plan.md) is the single reference copy in this repository. Update its dated status/history when decisions or real test results change; do not maintain a second copy here.
