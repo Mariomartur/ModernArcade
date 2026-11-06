@@ -11,7 +11,7 @@ RetroStation is an **application we build** to organize and launch existing cons
 
 ## Run the app core
 
-The Python 3.11+ core lists configured consoles and previews argument vectors for a selected system/game. `systems` and `preview` never start an emulator. The separate `launch` command **does** run the executable named by a trusted local profile after explicit confirmation; it does not install emulators or implement the controller interface. `config/examples/profiles.toml` is synthetic, not a claim that its emulators or core are installed.
+The Python 3.11+ core lists configured consoles and previews argument vectors for a selected system/game. `systems` and `preview` never start an emulator. The separate `launch` command **does** run the executable named by a trusted local profile after explicit confirmation; the controller-first menu below is an optional prototype. Neither installs emulators. `config/examples/profiles.toml` is synthetic, not a claim that its emulators or core are installed.
 
 ```sh
 PYTHONPATH=src python3 -B -m retrostation --config config/examples/profiles.toml systems
@@ -33,7 +33,9 @@ $uiPython = Join-Path ([Environment]::GetFolderPath("Desktop")) 'prueba_emu_nds_
 & $uiPython -B -m retrostation.pygame_menu --window
 ```
 
-D-pad moves, A selects the mock preview, B returns, and the window's close button exits. No real emulator is launched. The owner reported that D-pad/A/B worked in this game-free Windows menu on 2026-11-05; process completion alone did not prove it. Return from a running game and offline replay remain unverified.
+D-pad moves, A selects the mock preview, B returns, and the window's close button exits. Without launch options, **no emulator is launched**. The owner reported that D-pad/A/B worked in this game-free Windows menu on 2026-11-05; process completion alone did not prove it.
+
+The separate opt-in `retrostation.pygame_launch_menu --window --config <private-profile> --game <copied-game> --confirm` command lists configured systems and reuses `launch_game` after selecting a system with A **and** confirming on screen with A again; B cancels. The original game-free `retrostation.pygame_menu --window` command still rejects launch options. The launcher displays the external process status after the emulator closes, then B returns to the menu. Both config and game must be outside Git; a real emulator may write saves. This command has only been exercised with synthetic files and processes outside the repository: **do not launch the owner's game through the UI without separate authorization and a protected save backup**. Return from a real game and offline replay remain unverified.
 
 In Windows PowerShell, set `$env:PYTHONPATH = "src"` and replace `python3` with `python` in these commands. `systems` prints tab-separated `id`, `name`, and `emulator` per configured system in file order. `preview` prints a JSON argument array; it never executes it, checks whether the named emulator is installed, or requires the game path to exist. Provide `--config` **exactly once**. Each `[[systems]]` entry requires `id`, `name`, and `emulator`; an optional `command` is a nonempty list of argument strings with exactly one standalone `"{game}"` token. Unknown fields are rejected rather than silently ignored. The example `command` contains a placeholder core and cannot be used to launch a real emulator. The current code needs no downloaded dependencies or real games for its tests. For the ongoing work units, see [the feature log](odd/tasks/retrostation-app-foundation.md).
 
