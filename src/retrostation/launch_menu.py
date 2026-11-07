@@ -1,6 +1,6 @@
 """Pure controller confirmation state for a configured emulator launch."""
 
-from dataclasses import dataclass
+from dataclasses import dataclass, replace
 
 from .menu import ACTIONS
 
@@ -11,6 +11,7 @@ class LaunchState:
     selected: int = 0
     screen: str = "menu"
     message: str = ""
+    launched: bool = False
 
 
 def advance_launch(state: LaunchState, action: str) -> tuple[LaunchState, bool]:
@@ -19,24 +20,24 @@ def advance_launch(state: LaunchState, action: str) -> tuple[LaunchState, bool]:
         raise ValueError(f"Unknown menu action: {action}")
     if state.screen == "confirm":
         if action == "back":
-            return LaunchState(state.entries, state.selected), False
+            return replace(state, screen="menu", message=""), False
         if action == "select":
-            return LaunchState(state.entries, state.selected, "running"), True
+            return replace(state, screen="running", launched=True), True
     elif state.screen == "result":
         if action == "back":
-            return LaunchState(state.entries, state.selected), False
+            return replace(state, screen="menu", message=""), False
     elif state.screen == "menu":
         if action == "up":
-            return LaunchState(state.entries, (state.selected - 1) % len(state.entries)), False
+            return replace(state, selected=(state.selected - 1) % len(state.entries)), False
         if action == "down":
-            return LaunchState(state.entries, (state.selected + 1) % len(state.entries)), False
-        if action == "select":
-            return LaunchState(state.entries, state.selected, "confirm"), False
+            return replace(state, selected=(state.selected + 1) % len(state.entries)), False
+        if action == "select" and not state.launched:
+            return replace(state, screen="confirm"), False
     return state, False
 
 
 def finish_launch(state: LaunchState, message: str) -> LaunchState:
-    return LaunchState(state.entries, state.selected, "result", message)
+    return replace(state, screen="result", message=message)
 
 
 def render_launch(state: LaunchState) -> str:
@@ -47,7 +48,10 @@ def render_launch(state: LaunchState) -> str:
         return f"Running {name}; close the emulator to return."
     if state.screen == "result":
         return f"{state.message}\nPress B to return to the menu."
-    return "\n".join(
+    lines = [
         f"{'>' if index == state.selected else ' '} {entry}"
         for index, entry in enumerate(state.entries)
-    )
+    ]
+    if state.launched:
+        lines.append("One launch completed; close the window.")
+    return "\n".join(lines)

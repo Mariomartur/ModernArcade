@@ -165,8 +165,70 @@ class PygameMenuTests(unittest.TestCase):
                 ("Launch Nintendo DS? Saves may change.", "Press A to start; B to cancel."),
                 ("Running Nintendo DS; close the emulator to return.",),
                 ("Emulator exited with status 7", "Press B to return to the menu."),
-                ("> Nintendo DS",),
+                ("> Nintendo DS", "One launch completed; close the window."),
             ])
+
+    def test_window_allows_only_one_confirmed_launch_per_session(self):
+        from retrostation.pygame_menu import run_window
+
+        with tempfile.TemporaryDirectory() as directory:
+            folder = Path(directory)
+            marker = folder / "runs"
+            game = folder / "synthetic.bin"
+            game.write_bytes(b"synthetic fixture, not a game")
+            script = (
+                "from pathlib import Path; "
+                f"p=Path({str(marker)!r}); p.write_text((p.read_text() if p.exists() else '') + 'x')"
+            )
+            config = folder / "profiles.toml"
+            config.write_text(
+                '[[systems]]\nid="nds"\nname="Nintendo DS"\nemulator="Fixture"\n'
+                f'command={json.dumps([sys.executable, "-c", script, "{game}"])}\n', encoding="utf-8",
+            )
+            original = (config.read_bytes(), game.read_bytes())
+            pygame = FakePygame()
+            pygame.batches = [
+                [SimpleNamespace(type=pygame.CONTROLLERBUTTONDOWN, button=button)]
+                for button in (pygame.CONTROLLER_BUTTON_A, pygame.CONTROLLER_BUTTON_A,
+                               pygame.CONTROLLER_BUTTON_B, pygame.CONTROLLER_BUTTON_A,
+                               pygame.CONTROLLER_BUTTON_A)
+            ] + [[SimpleNamespace(type=pygame.QUIT)]]
+            state = run_window(pygame, FakeControllers(pygame.calls),
+                               launch_config=config, game=str(game))
+            self.assertEqual(marker.read_text(encoding="utf-8"), "x")
+            self.assertEqual((state.screen, state.selected), ("menu", 0))
+            self.assertIn("One launch completed; close the window.", pygame.screen.frames[-1])
+            self.assertEqual((config.read_bytes(), game.read_bytes()), original)
+
+    def test_refused_attempt_cannot_be_reconfirmed_in_same_window(self):
+        from retrostation.pygame_menu import run_window
+
+        with tempfile.TemporaryDirectory() as directory:
+            folder = Path(directory)
+            project = folder / "repository"
+            project.mkdir()
+            self.assertEqual(subprocess.run(["git", "init", "-q"], cwd=project,
+                                            capture_output=True, check=False).returncode, 0)
+            game = project / "synthetic.bin"
+            game.write_bytes(b"synthetic fixture")
+            marker = folder / "started"
+            config = self._synthetic_profile(folder, marker)
+            original = (config.read_bytes(), game.read_bytes())
+            pygame = FakePygame()
+            pygame.batches = [
+                [SimpleNamespace(type=pygame.CONTROLLERBUTTONDOWN, button=button)]
+                for button in (pygame.CONTROLLER_BUTTON_A, pygame.CONTROLLER_BUTTON_A,
+                               pygame.CONTROLLER_BUTTON_B, pygame.CONTROLLER_BUTTON_A,
+                               pygame.CONTROLLER_BUTTON_A)
+            ] + [[SimpleNamespace(type=pygame.QUIT)]]
+            state = run_window(pygame, FakeControllers(pygame.calls),
+                               launch_config=config, game=str(game))
+            self.assertEqual((state.screen, state.launched), ("menu", True))
+            self.assertIn("Launch refused: Game must be outside a Git worktree",
+                          pygame.screen.frames[2][0])
+            self.assertIn("One launch completed; close the window.", pygame.screen.frames[-1])
+            self.assertFalse(marker.exists())
+            self.assertEqual((config.read_bytes(), game.read_bytes()), original)
 
     def test_rejected_synthetic_game_stays_unchanged_and_reports_error(self):
         from retrostation.pygame_menu import run_window
