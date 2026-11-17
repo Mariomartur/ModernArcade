@@ -76,12 +76,17 @@ def render_catalog(state: CatalogState) -> str:
     if state.screen == "result":
         return f"{state.message}\nPress B to return to games."
     if state.screen == "systems":
-        names = [profile.name for profile in state.systems]
+        items = state.systems
         selected = state.system_index
+        label = lambda profile: profile.name
     else:
-        names = [game.title for game in state.selected_games]
+        items = state.selected_games
         selected = state.game_index
-    lines = [f"{'>' if index == selected else ' '} {name}" for index, name in enumerate(names)]
+        label = lambda game: game.title
+    # Six rows at y=32..272 leave y=320 for the one-attempt footer.
+    start = max(0, selected - 5)
+    lines = [f"{'>' if index == selected else ' '} {label(item)}"
+             for index, item in enumerate(items[start:start + 6], start)]
     if state.attempted:
         lines.append("One launch attempted; close the window.")
     return "\n".join(lines)
