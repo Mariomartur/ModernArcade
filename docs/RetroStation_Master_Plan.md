@@ -1,8 +1,8 @@
 # RetroStation — Documento maestro del proyecto
 
 > **Fuente de conocimiento canónica para los futuros chats y el repositorio.**<br>
-> Versión: **0.2.3** · Fecha de actualización: **5 de noviembre de 2026**<br>
-> Estado: **Menú ficticio controlado con mando observado; regreso desde un juego, uso sin conexión e inventario de seguridad pendientes**<br>
+> Versión: **0.2.4** · Fecha de actualización: **17 de noviembre de 2026**<br>
+> Estado: **Regreso desde un juego al menú con mando observado por el propietario en una prueba aislada; uso sin conexión e inventario de seguridad pendientes**<br>
 > Mantenimiento: evolucionará con decisiones técnicas, pruebas, incidencias y cambios de alcance.
 
 ---
@@ -103,7 +103,7 @@ Identificadores para referencias en issues, pruebas y commits:
 | RF-01 | Biblioteca local que detecte e identifique juegos y plataformas | Alta | Por diseñar |
 | RF-02 | Ejecutar juegos con emuladores existentes, con configuración por sistema/juego | Alta | Por probar |
 | RF-03 | Interfaz propia cómoda con navegación mediante DualShock 4 | Alta | Por diseñar y probar |
-| RF-04 | Volver a la interfaz propia y cerrar cada emulador sin teclado en el flujo normal | Alta | Por probar |
+| RF-04 | Volver a la interfaz propia y cerrar cada emulador sin teclado en el flujo normal | Alta | Observado por el propietario en una prueba DS aislada; otros emuladores no probados |
 | RF-05 | Usar juegos offline después de la preparación | Alta | Por validar |
 | RF-06 | Carátulas y descripciones descargables y cacheadas para uso offline | Alta | Por diseñar |
 | RF-07 | Configurar resolución/controles por título si hace falta | Alta | Por diseñar |
@@ -184,7 +184,7 @@ Registrar `sistema`, `juego`, `región/versión`, `origen legal`, `emulador + ve
 
 ### Plataforma del primer prototipo y propuestas restantes
 
-- **[CONFIRMADO]** Usar **Windows 11 actual para el primer prototipo no destructivo**; quedan pendientes mando, regreso al menú y uso sin conexión. Comparar después Linux generalista mediante prueba LiveUSB/instalación de ensayo o sistema independiente solo con copia verificada y autorización.
+- **[CONFIRMADO]** Usar **Windows 11 actual para el primer prototipo no destructivo**; el propietario observó regreso desde un juego al menú con mando en una prueba aislada; uso sin conexión y experiencia estable quedan pendientes. Comparar después Linux generalista mediante prueba LiveUSB/instalación de ensayo o sistema independiente solo con copia verificada y autorización.
 - **[CONFIRMADO]** La experiencia unificada será una aplicación propia que utilice emuladores existentes; no se desarrollarán motores de emulación. **[PROPUESTA]** Usar ES-DE, Playnite o RetroBat únicamente como referencias de experiencia y comparación, sin depender de ellos como interfaz principal.
 - **[PROPUESTA]** Aprovechar inicialmente **Python 3.11.9 confirmado en Windows** (sin actualizar por actualizar); SQLite para el catálogo; TOML/YAML para configuración; `pytest` para pruebas cuando haya código; Bash en Linux y PowerShell bajo Windows. Elevar la versión solo si una dependencia concreta lo exige.
 - **[PROPUESTA]** Mantener los ejecutables/emuladores en el SSD interno y guardar biblioteca/medios en la unidad de 2 TB si su salud y velocidad lo permiten. La ubicación definitiva de metadatos y guardados dependerá de pruebas de desconexión, respaldo y portabilidad.
@@ -233,7 +233,7 @@ Registrar `sistema`, `juego`, `región/versión`, `origen legal`, `emulador + ve
                      └────────────────────────────┘
 ```
 
-**Importante:** el núcleo y la CLI son cortes iniciales de **la aplicación propia**, no su interfaz final. `systems` enumera perfiles y `preview` genera argumentos sin ejecutar procesos; `launch --confirm` inicia un emulador externo desde un perfil privado con archivos fuera de Git. El usuario observó que el juego y la partida se cargaron desde la aplicación usando copias aisladas; esto no acredita una sesión estable, mando ni uso sin conexión. Catálogo SQLite e interfaz con mando siguen pendientes. Véase la [matriz de pruebas](test-matrix.md).
+**Importante:** el núcleo y la CLI son cortes iniciales de **la aplicación propia**, no su interfaz final. `systems` enumera perfiles y `preview` genera argumentos sin ejecutar procesos; `launch --confirm` inicia un emulador externo desde un perfil privado con archivos fuera de Git. El usuario observó carga de la partida desde la aplicación y, en otra prueba aislada desde el menú con mando, apertura del juego y regreso al menú sin teclado. Esto no acredita una sesión estable ni uso sin conexión. Catálogo SQLite e interfaz definitiva siguen pendientes. Véase la [matriz de pruebas](test-matrix.md).
 
 ### Separación de responsabilidades
 
@@ -286,13 +286,13 @@ Guardar copias críticas en **otro soporte distinto** del que aloja los original
 
 | Enfoque | Ventajas | Riesgos / costes de aprendizaje | Estado |
 |---|---|---|---|
-| Windows 11 + RetroStation + emuladores | No destructivo, acceso inmediato a drivers y software | Integración propia de mandos y cierre aún por construir | Primer prototipo elegido; menú ficticio con mando observado, regreso desde juego y offline por validar |
+| Windows 11 + RetroStation + emuladores | No destructivo, acceso inmediato a drivers y software | Integración de otros emuladores, uso offline y sesión estable por validar | Primer prototipo elegido; regreso desde un juego al menú con mando observado en prueba aislada |
 | Windows 11 + ES-DE / Playnite / RetroBat | Referencias de experiencia, no aplicación objetivo | No prueban por sí solas la interfaz propia | Comparación opcional |
 | Linux generalista + RetroStation + emuladores | Aprendizaje Linux, Bash, proyecto portable | Drivers NVIDIA híbridos, mandos, permisos, particionado, montaje | Preferencia del usuario, por validar |
 | Batocera en soporte separado | Banco de pruebas de experiencia consola | No sustituye el desarrollo de RetroStation | Alternativa de evaluación |
 | Reinstalar/dual boot directamente | Flexibilidad o experiencia dedicada | Riesgo de pérdida de datos y arranque, mantenimiento adicional | **No autorizado ni prioritario** |
 
-**ADR-001:** Windows 11 actual elegido para el primer prototipo; biblioteca de interfaz definitiva y SO final pendientes. No se ha autorizado cambiar particiones ni instalar otro sistema. Se observó control por mando en un menú ficticio; quedan por verificar regreso desde un juego, uso sin conexión y copia independiente antes de experimentar con otro SO.
+**ADR-001:** Windows 11 actual elegido para el primer prototipo; biblioteca de interfaz definitiva y SO final pendientes. No se ha autorizado cambiar particiones ni instalar otro sistema. El propietario observó control por mando y regreso al menú desde un juego DS aislado; quedan por verificar uso sin conexión y copia independiente antes de experimentar con otro SO.
 
 ---
 
@@ -429,7 +429,7 @@ git commit -m "docs: inicializar proyecto RetroStation"
 
 ### S0-04 — ADR-001 Sistema operativo y plataforma de prueba [PROTOTIPO WINDOWS ELEGIDO; SO FINAL PENDIENTE]
 
-El propietario eligió Windows 11 actual para el **primer prototipo**, sin cambios de sistema o particiones. La decisión puede ser distinta del **SO final**; el mando respondió en un menú ficticio, pero falta comprobar regreso desde un juego y uso sin conexión, y verificar una copia independiente antes de experimentar con otro sistema.
+El propietario eligió Windows 11 actual para el **primer prototipo**, sin cambios de sistema o particiones. La decisión puede ser distinta del **SO final**; el propietario observó el regreso desde un juego DS al menú con mando en una prueba aislada, pero faltan uso sin conexión y copia independiente antes de experimentar con otro sistema.
 
 ### S0-05 — Selección de juego de prueba libre/propio [PENDIENTE]
 
@@ -446,7 +446,7 @@ Identificar un título que se pueda usar legalmente y que ofrezca un camino simp
 | GitHub | Estado de publicación y visibilidad no verificado | confirmar decisión sobre licencia y visibilidad antes de publicar |
 | ADR-001 | Windows 11 elegido para el primer prototipo; biblioteca de interfaz y SO final abiertos | [decisión](decisions/ADR-001-platform-and-frontend.md) |
 | Prueba DS aislada | Arranque y partida cargada observados por el usuario tanto en melonDS independiente como desde RetroStation; no equivale al hito 1 | [matriz de pruebas](test-matrix.md) |
-| Primera prueba con mando | Menú ficticio observado con cruceta, A y B; no se lanzó un juego | regreso desde un juego y uso offline pendientes |
+| Primera prueba con mando | Menú ficticio observado con cruceta, A y B; prueba posterior con juego DS aislado y regreso al menú con mando observados por el propietario | uso offline pendiente |
 
 ---
 
@@ -562,7 +562,7 @@ Cómo validar / revertir:
 
 ## 15. Guía para el siguiente chat / instrucciones de colaboración
 
-> Estoy desarrollando **RetroStation**, una aplicación propia en Python que unifica emuladores existentes de varias consolas; el ASUS ROG Strix G es el primer equipo de prueba, no el único objetivo. Lee este documento entero y trabaja desde las decisiones y estados ya registrados. El núcleo Python, la previsualización y el lanzamiento explícito `launch --confirm` ya existen; el usuario observó navegación con mando y regreso desde una vista ficticia en un menú pygame-ce separado, no desde un juego. Las pruebas actuales no completan el hito de regresar desde un juego real ni el uso sin conexión. Continúa con la biblioteca y la interfaz propia controlable por mando en cortes verificables. Desarrolla los cortes que autorice y explica sus fundamentos para que pueda aprender y revisarlos; no presupongas la tecnología de interfaz definitiva ni el SO final. Mantén Git y la documentación desde el primer día. No cambies ni formatees el SO, ni muevas mis datos, ni publiques el repositorio sin autorización. Prioriza estabilidad, uso offline, mando, biblioteca local y coste cero. Si hay dudas técnicas, verifica fuentes oficiales actuales. Completa Sprint 0 de hardware/seguridad antes de experimentar con sistemas operativos o instalaciones reales; el desarrollo del núcleo seguro puede avanzar en paralelo.
+> Estoy desarrollando **RetroStation**, una aplicación propia en Python que unifica emuladores existentes de varias consolas; el ASUS ROG Strix G es el primer equipo de prueba, no el único objetivo. Lee este documento entero y trabaja desde las decisiones y estados ya registrados. El núcleo Python, la previsualización y el lanzamiento explícito `launch --confirm` ya existen; el usuario observó navegación con mando en un menú pygame-ce y, en una prueba aislada posterior, apertura de un juego DS y regreso al menú controlable con el mando sin teclado. Las pruebas actuales no completan el hito de uso sin conexión ni acreditan una sesión estable. Continúa con la biblioteca y la interfaz propia controlable por mando en cortes verificables. Desarrolla los cortes que autorice y explica sus fundamentos para que pueda aprender y revisarlos; no presupongas la tecnología de interfaz definitiva ni el SO final. Mantén Git y la documentación desde el primer día. No cambies ni formatees el SO, ni muevas mis datos, ni publiques el repositorio sin autorización. Prioriza estabilidad, uso offline, mando, biblioteca local y coste cero. Si hay dudas técnicas, verifica fuentes oficiales actuales. Completa Sprint 0 de hardware/seguridad antes de experimentar con sistemas operativos o instalaciones reales; el desarrollo del núcleo seguro puede avanzar en paralelo.
 
 ---
 
@@ -598,6 +598,7 @@ Son enlaces a documentación/proyectos, no una lista de software ya instalado ni
 | 0.2.1 | 2026-11-04 | Perfiles y previsualización probados; lanzamiento explícito y recarga de la partida observados por el usuario con copias DS aisladas. El núcleo tiene pruebas sintéticas; no se verificó Python 3.11 actual | Completar inventario/backup independiente, elegir plataforma del prototipo y evaluar interfaz con mando; comprobar retorno al menú y uso sin conexión |
 | 0.2.2 | 2026-11-04 | El propietario eligió Windows 11 actual como plataforma del primer prototipo, sin decidir la biblioteca de interfaz ni el SO final | Evaluar interfaz con mando y completar comprobaciones de retorno al menú, uso sin conexión y copia independiente antes de cambios del sistema |
 | 0.2.3 | 2026-11-05 | El propietario confirmó cruceta, A y B en la ventana ficticia de pygame-ce bajo Windows; el menú no abrió un emulador ni juego | Probar regreso al menú desde un juego real y repetición sin conexión por separado; verificar respaldo independiente antes de cambios del sistema |
+| 0.2.4 | 2026-11-17 | El propietario confirmó apertura de un juego DS aislado desde el menú y regreso al menú controlable con mando sin teclado; dos copias locales previas de guardado/estado se verificaron por hash y no cambiaron en las pruebas | Verificar repetición sin conexión, sesión representativa y respaldo independiente antes de cambios del sistema |
 
 ### Último estado comprobado
 
@@ -614,8 +615,8 @@ Son enlaces a documentación/proyectos, no una lista de software ya instalado ni
 - [ ] Publicación/visibilidad remota y licencia por verificar.
 - [ ] Protección de datos contrastada.
 - [x] Windows 11 actual elegido como plataforma del primer prototipo; no determina el SO final.
-- [x] Navegación con mando y regreso a menú desde una vista ficticia observados por el propietario; no es el flujo desde un juego real.
-- [ ] Biblioteca de interfaz definitiva evaluada; regreso desde un juego y uso sin conexión no verificados.
-- [ ] Primer juego ejecutado desde la aplicación propia con mando y sin Internet.
+- [x] Navegación con mando en vista ficticia y regreso al menú desde un juego DS aislado observados por el propietario; otros emuladores no probados.
+- [ ] Biblioteca de interfaz definitiva evaluada; uso sin conexión no verificado.
+- [ ] Primer juego ejecutado desde la aplicación propia con mando y sin Internet; la prueba con mando se hizo sin verificar desconexión de red.
 
 **Próximo mensaje de trabajo sugerido:** «Continúa el núcleo de la aplicación RetroStation desde `odd/tasks/retrostation-app-foundation.md`; en paralelo completa el inventario seguro de Sprint 0 (unidad externa, mando y copia de seguridad) sin instalar software ni mover datos hasta validar la estrategia».
