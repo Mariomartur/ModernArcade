@@ -13,6 +13,12 @@
 | Offline replay | No Wi-Fi-disconnected run was reported | Not verified |
 | App-driven launch | RetroStation's explicit `launch --confirm` passed synthetic tests and independent recheck. One isolated invocation exited 0 after melonDS closed; copied `.sav` and state files were written during the run, while the repository original remained unchanged. The owner later reported: “No hubo ningún problema, todo se ejcutó y se cargó bien” | Game and loaded progress user-observed from the app; no automated gameplay proof |
 
+## Synthetic catalog launcher trial (2026-11-17)
+
+- In an actual pygame-ce window with one mapped controller, the owner confirmed navigation, B cancellation, the displayed process status 7 after selecting the second NES test, and refusal of a second launch attempt in that session. This is owner-observed UI behavior, not inferred from process exit alone.
+- The corrected synthetic fixture's window run exited 0; its synthetic process exited 7 as expected. One launch-log entry named the second NES fixture, all six fixture files had unchanged SHA-256 hashes, and no unexpected files appeared. An earlier fixture preparation was rejected with exit 2 before the window opened because an argument contained an embedded newline; the fixture was corrected without app code changes.
+- No ROM, emulator or save was used in this trial. It adds no real-game validation; offline replay and prolonged session stability remain unverified.
+
 ## Next check
 
 Preserve the `.sav`, state file, and their local snapshots; the two fresh pre-window snapshots were hash-verified and the live save/state hashes were unchanged after each run. They are on the same disk, not an independent backup. Next check offline replay separately. The [master plan](RetroStation_Master_Plan.md#11-hito-1-definición-de-terminado-definition-of-done) reserves “stable” for a representative session with save/load and no data loss.
