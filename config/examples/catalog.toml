@@ -1,0 +1,6 @@
+# Synthetic example: the game file is not required and is never opened by list/preview.
+[[games]]
+id = "example-nes"
+title = "Example NES Game"
+system = "nes"
+path = "games/example.rom"

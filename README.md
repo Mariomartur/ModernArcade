@@ -19,6 +19,17 @@ PYTHONPATH=src python3 -B -m retrostation --config config/examples/profiles.toml
 python3 -B -m unittest discover -s tests -v
 ```
 
+## Read-only game catalog
+
+The independent catalog CLI lists titles and previews arguments by game ID. Both commands are **read-only and game-free**: they do not scan folders, open games, check game existence, or start emulators. The synthetic `example-nes` entry does not point to an installed game.
+
+```sh
+PYTHONPATH=src python3 -B -m retrostation.catalog --config config/examples/profiles.toml --catalog config/examples/catalog.toml list
+PYTHONPATH=src python3 -B -m retrostation.catalog --config config/examples/profiles.toml --catalog config/examples/catalog.toml preview --game-id example-nes
+```
+
+Supply `--config` and `--catalog` **exactly once each**, before `list` or `preview`. `list` prints TSV columns `id`, `title`, `system`, resolved `path` in catalog order; `preview` prints the same JSON argument array as the existing preview, without execution. Catalogs are UTF-8 TOML with `[[games]]` rows, each requiring nonempty string fields `id`, `title`, `system`, and `path` (no tabs or newlines). IDs must be unique, systems must exist in the supplied profile file, and unknown fields or invalid rows are rejected with exit code 2. Relative game paths are resolved against the **catalog file directory**, not the current working directory; absolute paths are kept. There is no SQLite catalog, UI integration, or process launch in this interface.
+
 The synthetic menu still runs independently of pygame-ce and does not open a window or game:
 
 ```sh
