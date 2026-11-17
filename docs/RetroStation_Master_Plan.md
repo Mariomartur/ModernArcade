@@ -405,7 +405,7 @@ nvidia-smi
 
 **Notas:** si `where.exe` o `nvidia-smi` informan de que un comando no existe, no es necesariamente un fallo. No compartir números de serie ni tokens. Comprobar también salud del SSD/externo con herramientas de Windows si procede.
 
-**Entregable:** `docs/hardware-inventory.md` (resumen sin información personal) y observaciones de almacenamiento externo.
+**Entregable:** resumen sin información personal del diagnóstico y observaciones de almacenamiento externo.
 
 ### S0-02 — Protección de datos [PENDIENTE]
 
@@ -439,7 +439,7 @@ Identificar un título que se pueda usar legalmente y que ofrezca un camino simp
 
 | Tarea | Estado | Evidencia esperada |
 |---|---|---|
-| Inventario Windows | Parcial: SSD, GPU, Git y Python 3.11.9 confirmados; faltan externa y temperaturas/controles ampliados | resumen `hardware-inventory.md` |
+| Inventario Windows | Parcial: SSD, GPU, Git y Python 3.11.9 confirmados; faltan externa y temperaturas/controles ampliados | resumen no sensible del diagnóstico |
 | Comprobación de unidad 2 TB | Pendiente: no detectada en la captura | espacio y formato |
 | Copia de seguridad | Por verificar | confirmación sin datos sensibles |
 | Repositorio Git local | Inicializado en `main`; commit inicial existente (22-10-2026) | revisar cambios antes de un próximo commit |

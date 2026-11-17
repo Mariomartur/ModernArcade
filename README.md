@@ -5,7 +5,7 @@ RetroStation is an **application we build** to organize and launch existing cons
 ## Quick path
 
 1. Read the [master plan](docs/RetroStation_Master_Plan.md), especially sections 8–11. Its earlier hardware readings are from October 17, 2026, not a fresh diagnosis.
-2. Work through the [Sprint 0 checklist](docs/sprint-0.md). Record safe, non-sensitive findings in the [hardware inventory](docs/hardware-inventory.md). This does not block read-only app development.
+2. Work through the [Sprint 0 checklist](docs/sprint-0.md). Summarize only safe, non-sensitive findings. This does not block read-only app development.
 3. Use [ADR-001](docs/decisions/ADR-001-platform-and-frontend.md) for the Windows 11 first-prototype choice; the UI toolkit and final OS remain undecided. Sprint 0 safety checks must be completed before treating the hardware milestone as finished or making system changes.
 4. Track the DS trials in the [test matrix](docs/test-matrix.md); the owner observed a game launched from the controller menu and returned to the menu using the controller. Offline replay and a representative stable session remain unverified.
 
