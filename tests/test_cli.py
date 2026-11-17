@@ -41,6 +41,51 @@ class SystemsCommandTests(unittest.TestCase):
 
 
 class CliContractTests(unittest.TestCase):
+    def test_non_utf8_profiles_report_config_errors_without_side_effects(self):
+        with tempfile.TemporaryDirectory() as directory:
+            folder = Path(directory)
+            config = folder / "profiles.toml"
+            game = folder / "synthetic-game.bin"
+            game_contents = b"synthetic fixture; never launch"
+            game.write_bytes(game_contents)
+            contents = b'[[systems]]\nid = "nes"\nname = "\xff"\nemulator = "Fixture"\n'
+            try:
+                contents.decode("utf-8")
+            except UnicodeDecodeError as error:
+                diagnostic = f"Cannot read profiles: {error}"
+            environment = dict(os.environ, PYTHONPATH=str(ROOT / "src"),
+                               PYTHONDONTWRITEBYTECODE="1", COLUMNS="80")
+            cases = (
+                ("retrostation", ("systems",)),
+                ("retrostation", ("preview", "--system", "nes", "--game", str(game))),
+                ("retrostation", ("launch", "--system", "nes", "--game", str(game), "--confirm")),
+                ("retrostation.pygame_launch_menu",
+                 ("--window", "--game", str(game), "--confirm")),
+            )
+            for module, arguments in cases:
+                with self.subTest(module=module, arguments=arguments):
+                    command = [sys.executable, "-B", "-m", module,
+                               "--config", str(config), *arguments]
+                    config.write_bytes(b"[")
+                    malformed = subprocess.run(
+                        command, cwd=directory, env=environment,
+                        capture_output=True, text=True, check=False,
+                    )
+                    self.assertEqual((malformed.returncode, malformed.stdout), (2, ""))
+                    self.assertIn("error: Cannot read profiles:", malformed.stderr)
+                    usage = malformed.stderr.partition("error: ")[0]
+                    config.write_bytes(contents)
+                    result = subprocess.run(
+                        command, cwd=directory, env=environment,
+                        capture_output=True, text=True, check=False,
+                    )
+                    self.assertEqual((result.returncode, result.stdout, result.stderr),
+                                     (2, "", f"{usage}error: {diagnostic}\n"))
+                    self.assertEqual(config.read_bytes(), contents)
+                    self.assertEqual(game.read_bytes(), game_contents)
+                    self.assertEqual({path.name for path in folder.iterdir()},
+                                     {config.name, game.name})
+
     def test_existing_root_help_keeps_its_previous_body(self):
         environment = dict(os.environ, PYTHONPATH=str(ROOT / "src"), COLUMNS="80")
         result = subprocess.run(

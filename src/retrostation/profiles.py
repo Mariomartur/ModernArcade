@@ -21,7 +21,7 @@ def load_systems(path: Path) -> tuple[SystemProfile, ...]:
     try:
         with path.open("rb") as source:
             document = tomllib.load(source)
-    except (OSError, tomllib.TOMLDecodeError) as error:
+    except (OSError, tomllib.TOMLDecodeError, UnicodeDecodeError) as error:
         raise ConfigError(f"Cannot read profiles: {error}") from error
 
     unknown = set(document) - {"systems"}
