@@ -19,16 +19,22 @@ PYTHONPATH=src python3 -B -m retrostation --config config/examples/profiles.toml
 python3 -B -m unittest discover -s tests -v
 ```
 
-## Read-only game catalog
+## Game catalog
 
-The independent catalog CLI lists titles and previews arguments by game ID. Both commands are **read-only and game-free**: they do not scan folders, open games, check game existence, or start emulators. The synthetic `example-nes` entry does not point to an installed game.
+The independent catalog CLI lists titles, previews arguments by game ID, and adds validated titles to an existing catalog. `list` and `preview` are **read-only and game-free**. `add` changes only the catalog file: none of these commands scan folders, open games, check game existence, or start emulators. The synthetic `example-nes` entry does not point to an installed game.
 
 ```sh
 PYTHONPATH=src python3 -B -m retrostation.catalog --config config/examples/profiles.toml --catalog config/examples/catalog.toml list
 PYTHONPATH=src python3 -B -m retrostation.catalog --config config/examples/profiles.toml --catalog config/examples/catalog.toml preview --game-id example-nes
 ```
 
-Supply `--config` and `--catalog` **exactly once each**, before `list` or `preview`. `list` prints TSV columns `id`, `title`, `system`, resolved `path` in catalog order; `preview` prints the same JSON argument array as the existing preview, without execution. Catalogs are UTF-8 TOML with `[[games]]` rows, each requiring nonempty string fields `id`, `title`, `system`, and `path` (no tabs or newlines). IDs must be unique, systems must exist in the supplied profile file, and unknown fields or invalid rows are rejected with exit code 2. Relative game paths are resolved against the **catalog file directory**, not the current working directory; absolute paths are kept. The catalog CLI never launches a process; the separate opt-in controller launcher below can select catalog games. There is no SQLite catalog.
+To add a title without editing TOML, use your existing catalog and a configured system:
+
+```sh
+PYTHONPATH=src python3 -B -m retrostation.catalog --config config/examples/profiles.toml --catalog /path/to/your/catalog.toml add --id example-new --title "New title" --system nes --path missing/game.bin
+```
+
+Supply `--config` and `--catalog` **exactly once each**, before `list`, `preview`, or `add`. Supply all four `add` fields (`--id`, `--title`, `--system`, `--path`) exactly once. `add` trims fields, rejects duplicate IDs and invalid data without changing the catalog, and prints `Added game: <id>` on success. It appends a `[[games]]` row while retaining original comments and relative paths; the catalog must already exist. `list` prints TSV columns `id`, `title`, `system`, resolved `path` in catalog order; `preview` prints the same JSON argument array as the existing preview, without execution. Catalogs are UTF-8 TOML with `[[games]]` rows, each requiring nonempty string fields `id`, `title`, `system`, and `path` (no tabs or newlines). IDs must be unique, systems must exist in the supplied profile file, and unknown fields or invalid rows are rejected with exit code 2. Relative game paths are resolved against the **catalog file directory**, not the current working directory; absolute paths are kept. The catalog CLI never launches a process; the separate opt-in controller launcher below can select catalog games. There is no SQLite catalog.
 
 The separate **preview-only catalog browser** opens a controller window without launching processes. With pygame-ce available, run:
 
