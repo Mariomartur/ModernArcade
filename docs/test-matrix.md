@@ -25,6 +25,12 @@
 - The fixture held 8 systems with 10 synthetic titles each (80 total). The window exited 0, the synthetic process exited 7 as expected, and exactly one launch-log entry named `s01-g01.fixture`. SHA-256 checks found all 82 protected files unchanged, with no unexpected files.
 - No ROM, emulator or save was used. This does not establish real-game scroll behavior, offline replay or session stability; those remain unverified.
 
+## Synthetic catalog browser trial (2026-11-20)
+
+- In an actual pygame-ce window with a mapped controller, the owner confirmed inspecting a long preview and using B to leave both the test selection and system selection; the owner called the check correct.
+- The catalog held 8 systems with 10 synthetic titles each (80 total). The browser window exited 0 with no output. Before/after SHA-256 checks found all 84 protected files unchanged (82 fixture files, the original baseline file, and the previous launch log); no unexpected files appeared apart from the reference snapshot. The old synthetic launch log was unchanged, with no new launches recorded.
+- No real game, emulator or save was used. This does not verify offline replay or prolonged session stability.
+
 ## Next check
 
 Preserve the `.sav`, state file, and their local snapshots; the two fresh pre-window snapshots were hash-verified and the live save/state hashes were unchanged after each run. They are on the same disk, not an independent backup. Next check offline replay separately. The [master plan](RetroStation_Master_Plan.md#11-hito-1-definición-de-terminado-definition-of-done) reserves “stable” for a representative session with save/load and no data loss.
