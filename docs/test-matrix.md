@@ -19,6 +19,12 @@
 - The corrected synthetic fixture's window run exited 0; its synthetic process exited 7 as expected. One launch-log entry named the second NES fixture, all six fixture files had unchanged SHA-256 hashes, and no unexpected files appeared. An earlier fixture preparation was rejected with exit 2 before the window opened because an argument contained an embedded newline; the fixture was corrected without app code changes.
 - No ROM, emulator or save was used in this trial. It adds no real-game validation; offline replay and prolonged session stability remain unverified.
 
+## Synthetic catalog scroll trial (2026-11-20)
+
+- In an actual pygame-ce window with a mapped controller, the owner reported smooth scrolling, selection remaining visible while scrolling, and Down past the last item wrapping to the first. The owner deliberately selected Test 01-01, not the initially expected Test 01-08; the expected-title probe mismatch was not an app failure.
+- The fixture held 8 systems with 10 synthetic titles each (80 total). The window exited 0, the synthetic process exited 7 as expected, and exactly one launch-log entry named `s01-g01.fixture`. SHA-256 checks found all 82 protected files unchanged, with no unexpected files.
+- No ROM, emulator or save was used. This does not establish real-game scroll behavior, offline replay or session stability; those remain unverified.
+
 ## Next check
 
 Preserve the `.sav`, state file, and their local snapshots; the two fresh pre-window snapshots were hash-verified and the live save/state hashes were unchanged after each run. They are on the same disk, not an independent backup. Next check offline replay separately. The [master plan](RetroStation_Master_Plan.md#11-hito-1-definición-de-terminado-definition-of-done) reserves “stable” for a representative session with save/load and no data loss.
