@@ -30,6 +30,14 @@ PYTHONPATH=src python3 -B -m retrostation.catalog --config config/examples/profi
 
 Supply `--config` and `--catalog` **exactly once each**, before `list` or `preview`. `list` prints TSV columns `id`, `title`, `system`, resolved `path` in catalog order; `preview` prints the same JSON argument array as the existing preview, without execution. Catalogs are UTF-8 TOML with `[[games]]` rows, each requiring nonempty string fields `id`, `title`, `system`, and `path` (no tabs or newlines). IDs must be unique, systems must exist in the supplied profile file, and unknown fields or invalid rows are rejected with exit code 2. Relative game paths are resolved against the **catalog file directory**, not the current working directory; absolute paths are kept. The catalog CLI never launches a process; the separate opt-in controller launcher below can select catalog games. There is no SQLite catalog.
 
+The separate **preview-only catalog browser** opens a controller window without launching processes. With pygame-ce available, run:
+
+```sh
+PYTHONPATH=src python3 -B -m retrostation.pygame_catalog_browser --window --config config/examples/profiles.toml --catalog config/examples/catalog.toml
+```
+
+Supply `--window`, `--config` and `--catalog` exactly once each; this command has no `--game` or `--confirm` option. Systems with games appear in profile order and titles in catalog order. D-pad moves through wrapped six-row lists; A opens games or a **JSON argv preview only**, never a confirmation or launch. On long previews D-pad scrolls wrapped argument lines; B returns to the same game or systems. Missing profile commands show a preview-unavailable message. An empty catalog is refused before the window opens. Selected game paths are not checked or read. This is distinct from the game-free synthetic menu and the opt-in process launcher below.
+
 The synthetic menu still runs independently of pygame-ce and does not open a window or game:
 
 ```sh
